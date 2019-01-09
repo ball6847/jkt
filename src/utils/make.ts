@@ -8,8 +8,8 @@ const makeUtils = schema => {
   return {
     parse: parserUtil(schema),
     serialize: serializerUtil(schema),
-    detect: detector
+    detect: detector,
   };
 };
 
-export default makeUtils;
+export = makeUtils;

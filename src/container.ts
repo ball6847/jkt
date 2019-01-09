@@ -3,10 +3,10 @@
 import loValues from "lodash/values";
 import utils from "./utils";
 import { isArray, isJKTObject, isNull } from "./utils/detector";
-import utilParser from "./utils/parser";
+import { valueParser } from "./utils/parser";
 
 const baseContainerData = {
-  isContainer: true
+  isContainer: true,
 };
 
 const appendContainerData = f => {
@@ -41,14 +41,14 @@ const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
   };
 
   const obj = function(valueToParse) {
-    const parsed = parse(utilParser.valueParser, valueToParse);
+    const parsed = parse(valueParser, valueToParse);
     const util = utils.makeUtils(value.schema);
     Object.assign(parsed, {
       j: () => util.serialize(parsed),
       getSchema: () => value.schema,
       toJSON: () => util.serialize(parsed),
       toString: () => JSON.stringify(util.serialize(parsed)),
-      instanceOf: struct => value.instanceOf(struct)
+      instanceOf: struct => value.instanceOf(struct),
     });
     return parsed;
   };
@@ -59,5 +59,5 @@ const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
 
 export default {
   arr: arrayContainer,
-  array: arrayContainer
+  array: arrayContainer,
 };

@@ -28,7 +28,7 @@ const makeInstance = (__id, schema, utils) => {
       } else {
         cleanSchema[key] = `ENUM(${JSON.stringify(Object.keys(schema[key].j())).replace(
           /\]*\[*\"*/g,
-          ""
+          "",
         )})`;
       }
       dirtySchema[key] = schema[key];
@@ -44,7 +44,7 @@ const makeInstance = (__id, schema, utils) => {
         getDirtySchema: () => dirtySchema,
         toJSON: () => utils.serialize(parsed),
         toString: () => JSON.stringify(utils.serialize(parsed)),
-        instanceOf: struct => descentChecker(struct)
+        instanceOf: struct => descentChecker(struct),
       });
       return parsed;
     } else {
@@ -95,8 +95,10 @@ const ENUM = (strings, ...bindings) => {
   return enumFunc;
 };
 
-export const Inst = makeInstance;
-export const c = container;
-export const trans = translator;
-export { jkt, ENUM };
-export default jkt;
+jkt.Inst = makeInstance;
+jkt.c = container;
+jkt.trans = translator;
+jkt.ENUM = ENUM;
+
+// export { ENUM };
+export = jkt;

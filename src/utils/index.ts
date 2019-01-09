@@ -3,7 +3,9 @@
 import generator from "./generator";
 import make from "./make";
 
-module.exports = {
+const Utils = {
   makeUtils: make,
-  generator
+  generator,
 };
+
+export = Utils;

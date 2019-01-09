@@ -16,22 +16,22 @@ const comparator = comp => {
   return obj => Object.prototype.toString.call(obj) === comp;
 };
 
-export const isArray = comparator(ARRAY_V);
-export const isObject = comparator(OBJECT_V);
-export const isFunction = comparator(FUNC_V);
-export const isString = comparator(STRING_V);
-export const isNumber = comparator(NUMBER_V);
-export const isBoolean = comparator(BOOL_V);
-export const isNull = comparator(NULL_V);
-export const isDate = comparator(DATE_V);
-export const isUndefined = comparator(UNDEF_V);
-export const isError = comparator(ERROR_V);
-export const isSymbol = comparator(SYMBOL_V);
-export const isInt = num => !isSymbol(num) && Number(num) === num && num % 1 === 0;
-export const isFloat = num => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
-export const isStringFloat = num =>
+const isArray = comparator(ARRAY_V);
+const isObject = comparator(OBJECT_V);
+const isFunction = comparator(FUNC_V);
+const isString = comparator(STRING_V);
+const isNumber = comparator(NUMBER_V);
+const isBoolean = comparator(BOOL_V);
+const isNull = comparator(NULL_V);
+const isDate = comparator(DATE_V);
+const isUndefined = comparator(UNDEF_V);
+const isError = comparator(ERROR_V);
+const isSymbol = comparator(SYMBOL_V);
+const isInt = num => !isSymbol(num) && Number(num) === num && num % 1 === 0;
+const isFloat = num => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
+const isStringFloat = num =>
   !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") != -1;
-export const isJKTObject = valueType => {
+const isJKTObject = valueType => {
   let isJKT = false;
   let hasSchema = false;
   if (Object(valueType).hasOwnProperty("isJKT")) isJKT = true;
@@ -40,7 +40,7 @@ export const isJKTObject = valueType => {
   return isJKT && hasSchema;
 };
 
-export const isENUMObject = valueType => {
+const isENUMObject = valueType => {
   let isENUM = false;
   let hasToJsonFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTENUM")) isENUM = true;
@@ -49,7 +49,7 @@ export const isENUMObject = valueType => {
   return isENUM && hasToJsonFunc;
 };
 
-export const isTranslatorObject = valueType => {
+const isTranslatorObject = valueType => {
   let isTranslator = false;
   let hasTranslateFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTTRANSLATOR")) isTranslator = true;
@@ -59,7 +59,7 @@ export const isTranslatorObject = valueType => {
 
 const hasMappingKey = key => /[a-zA-Z0-9\_]+\-\>[a-zA-Z0-9\_]+/g.test(key);
 
-export default {
+const detectors = {
   isArray,
   isObject,
   isFunction,
@@ -77,5 +77,7 @@ export default {
   isJKTObject,
   isENUMObject,
   isTranslatorObject,
-  hasMappingKey
+  hasMappingKey,
 };
+
+export = detectors;
