@@ -1,5 +1,3 @@
-"use strict";
-
 import container from "./container";
 import { isDeleteProperty } from "./datatypes";
 import extendBuilder from "./extender";
@@ -15,7 +13,8 @@ const descendantChecker = descendantsIds => {
   return struct => descendantsIds.includes(struct.__id[struct.__id.length - 1]);
 };
 
-const makeInstance = (__id, schema, utils) => {
+// tslint:disable-next-line:variable-name
+const makeInstance = (__id, schema, u) => {
   const structId = isArray(__id) ? __id : [__id];
   const cleanSchema = {}; // pure schema
   const dirtySchema = {}; // impure schema because it's including builtin jkt function
@@ -35,16 +34,16 @@ const makeInstance = (__id, schema, utils) => {
     }
   });
 
-  const struct = function(...vals) {
-    if (utils.detect.isObject(vals[0])) {
-      const parsed = utils.parse(vals[0]);
+  const struct = (...vals) => {
+    if (u.detect.isObject(vals[0])) {
+      const parsed = u.parse(vals[0]);
       Object.assign(parsed, {
-        j: () => utils.serialize(parsed),
+        j: () => u.serialize(parsed),
         getSchema: () => cleanSchema,
         getDirtySchema: () => dirtySchema,
-        toJSON: () => utils.serialize(parsed),
-        toString: () => JSON.stringify(utils.serialize(parsed)),
-        instanceOf: struct => descentChecker(struct),
+        toJSON: () => u.serialize(parsed),
+        toString: () => JSON.stringify(u.serialize(parsed)),
+        instanceOf: instance => descentChecker(instance),
       });
       return parsed;
     } else {
@@ -56,7 +55,7 @@ const makeInstance = (__id, schema, utils) => {
   // builtin properties
   struct.isJKT = true;
   struct.schema = cleanSchema;
-  struct.childOf = struct => descentChecker(struct);
+  struct.childOf = parentStruct => descentChecker(parentStruct);
 
   struct.__id = structId;
   struct.__schema = dirtySchema;
@@ -65,7 +64,9 @@ const makeInstance = (__id, schema, utils) => {
   const enumKey = "E";
   Object.keys(dirtySchema).forEach(key => {
     if (isENUMObject(schema[key])) {
-      if (!struct[enumKey]) struct[enumKey] = {};
+      if (!struct[enumKey]) {
+        struct[enumKey] = {};
+      }
       struct[enumKey][key.toUpperCase()] = schema[key].j();
     }
   });
@@ -74,9 +75,12 @@ const makeInstance = (__id, schema, utils) => {
 };
 
 const jkt = (strings, ...bindings) => {
+  // tslint:disable-next-line:variable-name
   const __id = utils.generator.generateId();
   const schema = splitter(strings, bindings);
-  if (hasReservedKeys(schema)) triggerErrorReservedKeys();
+  if (hasReservedKeys(schema)) {
+    triggerErrorReservedKeys();
+  }
   return makeInstance(__id, schema, utils.makeUtils(schema));
 };
 
@@ -86,9 +90,7 @@ jkt.array = jktObj => {
 
 const ENUM = (strings, ...bindings) => {
   const enumDefinitions = enumSplitter(strings, bindings);
-  const enumFunc = function() {
-    return enumDefinitions;
-  };
+  const enumFunc = () => enumDefinitions;
   enumFunc.isJKTENUM = true;
   enumFunc.j = () => enumDefinitions;
   enumFunc.toJSON = () => enumDefinitions;
@@ -100,5 +102,4 @@ jkt.c = container;
 jkt.trans = translator;
 jkt.ENUM = ENUM;
 
-// export { ENUM };
 export = jkt;

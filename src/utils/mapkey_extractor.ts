@@ -12,7 +12,9 @@ const extractMapKey = key => {
   const hasMappingKey = detector.hasMappingKey(key);
   if (hasMappingKey) {
     const splittedKeys = key.split(/\-\>/g);
-    if (splittedKeys.length > 1) mapKey = [splittedKeys[0], splittedKeys[1]];
+    if (splittedKeys.length > 1) {
+      mapKey = [splittedKeys[0], splittedKeys[1]];
+    }
   }
   return mapKey;
 };

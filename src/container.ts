@@ -1,5 +1,3 @@
-"use strict";
-
 import loValues from "lodash/values";
 import utils from "./utils";
 import { isArray, isJKTObject, isNull } from "./utils/detector";
@@ -15,23 +13,27 @@ const appendContainerData = f => {
 };
 
 const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
-  const parse = (valueParser, valueToParse) => {
+  const parse = (parser, valueToParse) => {
     if (isArray(valueToParse)) {
       const parsedValues = [];
-      valueToParse.forEach(valueToParse => {
+      valueToParse.forEach(item => {
         if (isJKTObject(value)) {
-          const p = valueParser(value.__schema, valueToParse);
+          const p = parser(value.__schema, item);
           let hasNotNullValue = false;
           loValues(p).forEach(v => {
-            if (!isNull(v) && v !== undefined) hasNotNullValue = true;
+            if (!isNull(v) && v !== undefined) {
+              hasNotNullValue = true;
+            }
           });
           if (strictNull) {
-            if (hasNotNullValue) parsedValues.push(p);
+            if (hasNotNullValue) {
+              parsedValues.push(p);
+            }
           } else {
             parsedValues.push(p);
           }
         } else {
-          parsedValues.push(valueToParse);
+          parsedValues.push(item);
         }
       });
       return parsedValues;
@@ -40,7 +42,7 @@ const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
     }
   };
 
-  const obj = function(valueToParse) {
+  const obj = valueToParse => {
     const parsed = parse(valueParser, valueToParse);
     const util = utils.makeUtils(value.schema);
     Object.assign(parsed, {

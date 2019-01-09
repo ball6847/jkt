@@ -1,5 +1,3 @@
-"use strict";
-
 const ARRAY_V = "[object Array]";
 const OBJECT_V = "[object Object]";
 const STRING_V = "[object String]";
@@ -30,12 +28,16 @@ const isSymbol = comparator(SYMBOL_V);
 const isInt = num => !isSymbol(num) && Number(num) === num && num % 1 === 0;
 const isFloat = num => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
 const isStringFloat = num =>
-  !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") != -1;
+  !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") !== -1;
 const isJKTObject = valueType => {
   let isJKT = false;
   let hasSchema = false;
-  if (Object(valueType).hasOwnProperty("isJKT")) isJKT = true;
-  if (Object(valueType).hasOwnProperty("schema") && isObject(valueType.schema)) hasSchema = true;
+  if (Object(valueType).hasOwnProperty("isJKT")) {
+    isJKT = true;
+  }
+  if (Object(valueType).hasOwnProperty("schema") && isObject(valueType.schema)) {
+    hasSchema = true;
+  }
 
   return isJKT && hasSchema;
 };
@@ -43,17 +45,24 @@ const isJKTObject = valueType => {
 const isENUMObject = valueType => {
   let isENUM = false;
   let hasToJsonFunc = false;
-  if (Object(valueType).hasOwnProperty("isJKTENUM")) isENUM = true;
-  if (Object(valueType).hasOwnProperty("j") && Object(valueType).hasOwnProperty("toJSON"))
+  if (Object(valueType).hasOwnProperty("isJKTENUM")) {
+    isENUM = true;
+  }
+  if (Object(valueType).hasOwnProperty("j") && Object(valueType).hasOwnProperty("toJSON")) {
     hasToJsonFunc = true;
+  }
   return isENUM && hasToJsonFunc;
 };
 
 const isTranslatorObject = valueType => {
   let isTranslator = false;
   let hasTranslateFunc = false;
-  if (Object(valueType).hasOwnProperty("isJKTTRANSLATOR")) isTranslator = true;
-  if (Object(valueType).hasOwnProperty("translate")) hasTranslateFunc = true;
+  if (Object(valueType).hasOwnProperty("isJKTTRANSLATOR")) {
+    isTranslator = true;
+  }
+  if (Object(valueType).hasOwnProperty("translate")) {
+    hasTranslateFunc = true;
+  }
   return isTranslator && hasTranslateFunc;
 };
 

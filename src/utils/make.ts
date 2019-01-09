@@ -1,5 +1,3 @@
-"use strict";
-
 import detector from "./detector";
 import parserUtil from "./parser";
 import serializerUtil from "./serializer";

@@ -1,5 +1,3 @@
-"use strict";
-
 import { BOOLEAN, DATE, DATE_PLAIN, NUMBER, STRING } from "../datatypes";
 import detector from "./detector";
 import extractMapKey from "./mapkey_extractor";
@@ -11,7 +9,7 @@ const safeSerializer = {
   [NUMBER]: val => val,
   [DATE]: val => (val ? val.toJSON() : null), // ISO-8601 UTC
   [DATE_PLAIN]: val => (val ? val.toJSON() : null), // ISO-8601 UTC
-  [BOOLEAN]: val => val
+  [BOOLEAN]: val => val,
 };
 
 const purified = obj => {
@@ -29,16 +27,21 @@ const valueSerializer = (baseSchema, parsedValues) => {
     const valueType = baseSchema[key];
 
     const [srcKey, mapKey] = extractMapKey(key);
-    if (mapKey !== null) key = mapKey;
+    if (mapKey !== null) {
+      key = mapKey;
+    }
 
     const value = parsedValues[key];
-    if (!detector.isUndefined(value))
+    if (!detector.isUndefined(value)) {
       if (isSafeToRelease(valueType)) {
         serializedValues[key] = safeSerializer[valueType](value);
       } else {
         const purifiedVal = purified(value);
-        if (!detector.isUndefined(purifiedVal)) serializedValues[key] = purifiedVal;
+        if (!detector.isUndefined(purifiedVal)) {
+          serializedValues[key] = purifiedVal;
+        }
       }
+    }
   });
   return serializedValues;
 };

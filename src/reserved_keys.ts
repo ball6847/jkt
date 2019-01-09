@@ -1,12 +1,10 @@
-"use strict";
-
 export const RESERVED_KEYS = [
   "getSchema",
   "j",
   "toJSON",
   "toString",
   "getDirtySchema",
-  "instanceOf"
+  "instanceOf",
 ];
 
 export const hasReservedKeys = obj => {

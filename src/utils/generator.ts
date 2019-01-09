@@ -1,5 +1,3 @@
-"use strict";
-
 import shortId from "shortid";
 
 shortId.seed(1831);

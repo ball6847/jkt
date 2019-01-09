@@ -1,20 +1,25 @@
-"use strict";
-
 import loValues from "lodash/values";
 import { isDeleteProperty, nonNullableTypes, parserableTypes } from "./datatypes";
 import { isArray, isString, isUndefined } from "./utils/detector";
 
 const deepClone = (cln, obj = {}) => {
-  for (const i in obj)
-    cln[i] = typeof obj[i] == "object" ? deepClone(obj[i].constructor(), obj[i]) : obj[i];
+  for (const i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      cln[i] = typeof obj[i] === "object" ? deepClone(obj[i].constructor(), obj[i]) : obj[i];
+    }
+  }
   return cln;
 };
 
 const emptyValidator = values => {
-  if (isUndefined(values)) throw new Error("You need to define a schema");
-  if (values.length == 1) {
+  if (isUndefined(values)) {
+    throw new Error("You need to define a schema");
+  }
+  if (values.length === 1) {
     const s = values[0].replace(/(\s)/gm, "");
-    if (s.length === 0) throw new Error("You need to define a schema");
+    if (s.length === 0) {
+      throw new Error("You need to define a schema");
+    }
   }
 };
 
@@ -30,7 +35,9 @@ export const splitter = (strict = false) => {
     let bindIdx = 0;
 
     // spread value fix
-    if (isArray(bindings) && bindings.length > 0) bindings = bindings[0];
+    if (isArray(bindings) && bindings.length > 0) {
+      bindings = bindings[0];
+    }
 
     strings
       .filter(s => s.length > 0)
@@ -66,22 +73,28 @@ export const splitter = (strict = false) => {
                 nonNullableTypes(trimmedName) ||
                 isDeleteProperty(trimmedName)
               )
-            )
+            ) {
               throw new TypeError("Unknown type was given");
+            }
           }
 
           // normalize array binding values
-          if (isArray(pairs[key]) && pairs[key].length === 1) pairs[key] = pairs[key][0];
+          if (isArray(pairs[key]) && pairs[key].length === 1) {
+            pairs[key] = pairs[key][0];
+          }
 
-          if (typeName.length === 0) bindIdx++;
+          if (typeName.length === 0) {
+            bindIdx++;
+          }
         });
       });
 
     const pairVals = loValues(pairs);
     const countUndefTypes = pairVals.filter(typeVal => typeof typeVal === "undefined").length;
 
-    if (countUndefTypes > 0 && strict)
+    if (countUndefTypes > 0 && strict) {
       throw new Error("Invalid Schema Detected, please define the right value types");
+    }
 
     return pairs;
   };
@@ -94,10 +107,14 @@ export const enumSplitter = (strings, ...bindings) => {
   let bindIdx = 0;
 
   // spread value fix
-  if (isArray(bindings) && bindings.length > 0) bindings = bindings[0];
+  if (isArray(bindings) && bindings.length > 0) {
+    bindings = bindings[0];
+  }
 
   // handle string argument
-  if (isString(strings)) strings = [strings];
+  if (isString(strings)) {
+    strings = [strings];
+  }
 
   strings
     .filter(s => s.length > 0)
@@ -119,7 +136,9 @@ export const enumSplitter = (strings, ...bindings) => {
           const removedCommaTrailSpcs = removeCommaAndTrailingSpaces(splitted);
           const cleaned = removedCommaTrailSpcs.filter(s => s.length > 0);
 
-          if (cleaned.length > 0) enumBlocks.push(...cleaned);
+          if (cleaned.length > 0) {
+            enumBlocks.push(...cleaned);
+          }
         } else {
           // enum with defined values
           enumBlocks.push(RCTS(str));

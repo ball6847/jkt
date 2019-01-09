@@ -1,5 +1,3 @@
-"use strict";
-
 import loValues from "lodash/values";
 import {
   isArray,
@@ -16,7 +14,7 @@ import {
   isObject,
   isString,
   isSymbol,
-  isTranslatorObject
+  isTranslatorObject,
 } from "./utils/detector";
 
 export const STRING = "String";
@@ -49,7 +47,7 @@ export const nonNullableTypes = typeName =>
     DATE_PLAIN_ONLY,
     FUNCTION_ONLY,
     NUMBER_ONLY,
-    OBJECT_ONLY
+    OBJECT_ONLY,
   ].includes(typeName);
 
 export const isPredefinedTypes = valueType =>

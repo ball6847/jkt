@@ -1,5 +1,3 @@
-"use strict";
-
 import nilValue from "lodash/isNil";
 import loValues from "lodash/values";
 import moment from "moment";
@@ -24,7 +22,7 @@ import {
   OBJECT_ONLY,
   parserableTypes,
   STRING,
-  STRING_ONLY
+  STRING_ONLY,
 } from "../datatypes";
 import detector from "./detector";
 import extractMapKey from "./mapkey_extractor";
@@ -34,7 +32,9 @@ const validDateFromString = (dateVal, utcAware = true) => {
     try {
       // detect ISO 8601
       const date = utcAware ? moment(dateVal) : moment.utc(dateVal);
-      if (date.isValid()) return date;
+      if (date.isValid()) {
+        return date;
+      }
     } catch (err) {
       return false;
     }
@@ -44,30 +44,38 @@ const validDateFromString = (dateVal, utcAware = true) => {
 
 const parser = {
   [STRING]: val => {
-    if (detector.isString(val) && val.length) return val;
+    if (detector.isString(val) && val.length) {
+      return val;
+    }
     const parsed = val ? JSON.stringify(val) : null;
     return detector.isString(parsed) && parsed.length > 0 ? parsed : null;
   },
   [ARRAY]: val => (detector.isArray(val) ? val : null),
   [BOOLEAN]: val => (detector.isBoolean(val) ? val : null),
   [DATE]: val => {
-    if (detector.isDate(val)) return val;
+    if (detector.isDate(val)) {
+      return val;
+    }
     return validDateFromString(val) || null;
   },
   [DATE_PLAIN]: val => {
-    if (detector.isDate(val)) return val;
+    if (detector.isDate(val)) {
+      return val;
+    }
     return validDateFromString(val, false) || null;
   },
   [FUNCTION]: val => (detector.isFunction(val) ? val : null),
   [NUMBER]: val => {
-    if (detector.isNumber(val)) return val;
+    if (detector.isNumber(val)) {
+      return val;
+    }
     if (val && !isNaN(val)) {
-      return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val);
+      return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val, 10);
     }
     return null;
   },
   [OBJECT]: val => (detector.isObject ? val : null),
-  [ANY]: val => val
+  [ANY]: val => val,
 };
 
 const nonNullableChecker = {
@@ -79,12 +87,12 @@ const nonNullableChecker = {
   [FUNCTION_ONLY]: val => detector.isFunction(val),
   [NUMBER_ONLY]: val => {
     if (val && !isNaN(val)) {
-      return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val);
+      return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val, 10);
     }
 
     return false;
   },
-  [OBJECT_ONLY]: val => detector.isObject(val)
+  [OBJECT_ONLY]: val => detector.isObject(val),
 };
 
 const nonNullableParser = {
@@ -95,17 +103,21 @@ const nonNullableParser = {
   [DATE_PLAIN_ONLY]: val => parser[DATE_PLAIN](val),
   [FUNCTION_ONLY]: val => parser[FUNCTION](val),
   [NUMBER_ONLY]: val => parser[NUMBER](val),
-  [OBJECT_ONLY]: val => parser[OBJECT](val)
+  [OBJECT_ONLY]: val => parser[OBJECT](val),
 };
 
 const valueParser = (schema, valuesToParse) => {
   const parsedValues = {};
   Object.keys(schema).forEach(key => {
     const valueType = schema[key];
-    if (isDeleteProperty(valueType)) return;
+    if (isDeleteProperty(valueType)) {
+      return;
+    }
 
     const [srcKey, mapKey] = extractMapKey(key);
-    if (mapKey !== null) key = mapKey;
+    if (mapKey !== null) {
+      key = mapKey;
+    }
 
     const value =
       detector.isUndefined(valuesToParse) || detector.isNull(valuesToParse)
@@ -149,7 +161,9 @@ const valueParser = (schema, valuesToParse) => {
       }
     } else {
       // Value was undefined or not matched with available schema
-      if (!nonNullableTypes(valueType)) parsedValues[key] = null;
+      if (!nonNullableTypes(valueType)) {
+        parsedValues[key] = null;
+      }
     }
   });
   return parsedValues;
