@@ -2,7 +2,7 @@ import detector from "./detector";
 import parserUtil from "./parser";
 import serializerUtil from "./serializer";
 
-const makeUtils = schema => {
+const makeUtils = (schema: any) => {
   return {
     parse: parserUtil(schema),
     serialize: serializerUtil(schema),

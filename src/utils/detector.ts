@@ -10,8 +10,8 @@ const UNDEF_V = "[object Undefined]";
 const ERROR_V = "[object Error]";
 const SYMBOL_V = "[object Symbol]";
 
-const comparator = comp => {
-  return obj => Object.prototype.toString.call(obj) === comp;
+const comparator = (comp: string) => {
+  return (obj: any) => Object.prototype.toString.call(obj) === comp;
 };
 
 const isArray = comparator(ARRAY_V);
@@ -25,11 +25,11 @@ const isDate = comparator(DATE_V);
 const isUndefined = comparator(UNDEF_V);
 const isError = comparator(ERROR_V);
 const isSymbol = comparator(SYMBOL_V);
-const isInt = num => !isSymbol(num) && Number(num) === num && num % 1 === 0;
-const isFloat = num => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
-const isStringFloat = num =>
+const isInt = (num: any) => !isSymbol(num) && Number(num) === num && num % 1 === 0;
+const isFloat = (num: any) => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
+const isStringFloat = (num: any) =>
   !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") !== -1;
-const isJKTObject = valueType => {
+const isJKTObject = (valueType: any) => {
   let isJKT = false;
   let hasSchema = false;
   if (Object(valueType).hasOwnProperty("isJKT")) {
@@ -42,7 +42,7 @@ const isJKTObject = valueType => {
   return isJKT && hasSchema;
 };
 
-const isENUMObject = valueType => {
+const isENUMObject = (valueType: any) => {
   let isENUM = false;
   let hasToJsonFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTENUM")) {
@@ -54,7 +54,7 @@ const isENUMObject = valueType => {
   return isENUM && hasToJsonFunc;
 };
 
-const isTranslatorObject = valueType => {
+const isTranslatorObject = (valueType: any) => {
   let isTranslator = false;
   let hasTranslateFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTTRANSLATOR")) {
@@ -66,7 +66,7 @@ const isTranslatorObject = valueType => {
   return isTranslator && hasTranslateFunc;
 };
 
-const hasMappingKey = key => /[a-zA-Z0-9\_]+\-\>[a-zA-Z0-9\_]+/g.test(key);
+const hasMappingKey = (key: string) => /[a-zA-Z0-9\_]+\-\>[a-zA-Z0-9\_]+/g.test(key);
 
 const detectors = {
   isArray,

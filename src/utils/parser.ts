@@ -27,7 +27,7 @@ import {
 import detector from "./detector";
 import extractMapKey from "./mapkey_extractor";
 
-const validDateFromString = (dateVal, utcAware = true) => {
+const validDateFromString = (dateVal: moment.MomentInput, utcAware = true) => {
   if (detector.isString(dateVal)) {
     try {
       // detect ISO 8601
@@ -43,29 +43,29 @@ const validDateFromString = (dateVal, utcAware = true) => {
 };
 
 const parser = {
-  [STRING]: val => {
+  [STRING]: (val: any) => {
     if (detector.isString(val) && val.length) {
       return val;
     }
     const parsed = val ? JSON.stringify(val) : null;
     return detector.isString(parsed) && parsed.length > 0 ? parsed : null;
   },
-  [ARRAY]: val => (detector.isArray(val) ? val : null),
-  [BOOLEAN]: val => (detector.isBoolean(val) ? val : null),
-  [DATE]: val => {
+  [ARRAY]: (val: any) => (detector.isArray(val) ? val : null),
+  [BOOLEAN]: (val: any) => (detector.isBoolean(val) ? val : null),
+  [DATE]: (val: any) => {
     if (detector.isDate(val)) {
       return val;
     }
     return validDateFromString(val) || null;
   },
-  [DATE_PLAIN]: val => {
+  [DATE_PLAIN]: (val: any) => {
     if (detector.isDate(val)) {
       return val;
     }
     return validDateFromString(val, false) || null;
   },
-  [FUNCTION]: val => (detector.isFunction(val) ? val : null),
-  [NUMBER]: val => {
+  [FUNCTION]: (val: any) => (detector.isFunction(val) ? val : null),
+  [NUMBER]: (val: any) => {
     if (detector.isNumber(val)) {
       return val;
     }
@@ -74,36 +74,36 @@ const parser = {
     }
     return null;
   },
-  [OBJECT]: val => (detector.isObject ? val : null),
-  [ANY]: val => val,
+  [OBJECT]: (val: any) => (detector.isObject ? val : null),
+  [ANY]: (val: any) => val,
 };
 
 const nonNullableChecker = {
-  [STRING_ONLY]: val => detector.isString(val),
-  [ARRAY_ONLY]: val => detector.isArray(val),
-  [BOOLEAN_ONLY]: val => detector.isBoolean(val),
-  [DATE_ONLY]: val => detector.isDate(val) || validDateFromString(val) !== null,
-  [DATE_PLAIN_ONLY]: val => detector.isDate(val) || validDateFromString(val, false) !== null,
-  [FUNCTION_ONLY]: val => detector.isFunction(val),
-  [NUMBER_ONLY]: val => {
+  [STRING_ONLY]: (val: any) => detector.isString(val),
+  [ARRAY_ONLY]: (val: any) => detector.isArray(val),
+  [BOOLEAN_ONLY]: (val: any) => detector.isBoolean(val),
+  [DATE_ONLY]: (val: any) => detector.isDate(val) || validDateFromString(val) !== null,
+  [DATE_PLAIN_ONLY]: (val: any) => detector.isDate(val) || validDateFromString(val, false) !== null,
+  [FUNCTION_ONLY]: (val: any) => detector.isFunction(val),
+  [NUMBER_ONLY]: (val: any) => {
     if (val && !isNaN(val)) {
       return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val, 10);
     }
 
     return false;
   },
-  [OBJECT_ONLY]: val => detector.isObject(val),
+  [OBJECT_ONLY]: (val: any) => detector.isObject(val),
 };
 
 const nonNullableParser = {
-  [STRING_ONLY]: val => parser[STRING](val),
-  [ARRAY_ONLY]: val => parser[ARRAY](val),
-  [BOOLEAN_ONLY]: val => parser[BOOLEAN](val),
-  [DATE_ONLY]: val => parser[DATE](val),
-  [DATE_PLAIN_ONLY]: val => parser[DATE_PLAIN](val),
-  [FUNCTION_ONLY]: val => parser[FUNCTION](val),
-  [NUMBER_ONLY]: val => parser[NUMBER](val),
-  [OBJECT_ONLY]: val => parser[OBJECT](val),
+  [STRING_ONLY]: (val: any) => parser[STRING](val),
+  [ARRAY_ONLY]: (val: any) => parser[ARRAY](val),
+  [BOOLEAN_ONLY]: (val: any) => parser[BOOLEAN](val),
+  [DATE_ONLY]: (val: any) => parser[DATE](val),
+  [DATE_PLAIN_ONLY]: (val: any) => parser[DATE_PLAIN](val),
+  [FUNCTION_ONLY]: (val: any) => parser[FUNCTION](val),
+  [NUMBER_ONLY]: (val: any) => parser[NUMBER](val),
+  [OBJECT_ONLY]: (val: any) => parser[OBJECT](val),
 };
 
 const valueParser = (schema, valuesToParse) => {

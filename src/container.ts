@@ -50,7 +50,7 @@ const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
       getSchema: () => value.schema,
       toJSON: () => util.serialize(parsed),
       toString: () => JSON.stringify(util.serialize(parsed)),
-      instanceOf: struct => value.instanceOf(struct),
+      instanceOf: (struct: any) => value.instanceOf(struct),
     });
     return parsed;
   };

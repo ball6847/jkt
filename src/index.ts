@@ -74,7 +74,7 @@ const makeInstance = (__id, schema, u) => {
   return struct;
 };
 
-const jkt = (strings, ...bindings) => {
+const jkt = (strings: TemplateStringsArray, ...bindings: any[]) => {
   // tslint:disable-next-line:variable-name
   const __id = utils.generator.generateId();
   const schema = splitter(strings, bindings);
