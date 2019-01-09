@@ -6,7 +6,7 @@
   "jsRules": {},
   "rules": {
     "semicolon": false,
-    "object-literal-sort-keys": false,
+    "object-literal-sort-keys": false
   },
   "rulesDirectory": []
 }
