@@ -5,7 +5,9 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --require vars.js --timeout 15000 --recursive --slow 1 test/",
-    "test:watch": "NODE_ENV=test mocha --watch --require vars.js --timeout 15000 --recursive --slow 1 test/"
+    "test:watch": "NODE_ENV=test mocha --watch --require vars.js --timeout 15000 --recursive --slow 1 test/",
+    "test:ts": "NODE_ENV=test mocha --require vars-ts.js --timeout 15000 --recursive --slow 1 test/",
+    "test:ts:watch": "NODE_ENV=test mocha --watch --require vars-ts.js --timeout 15000 --recursive --slow 1 test/"
   },
   "repository": {
     "type": "git",
@@ -29,6 +31,7 @@
   },
   "homepage": "https://github.com/slaveofcode/jkt#readme",
   "devDependencies": {
+    "@types/node": "^10.12.18",
     "chai": "^4.1.2",
     "chai-things": "^0.2.0",
     "mocha": "^5.2.0",
