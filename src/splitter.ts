@@ -1,17 +1,8 @@
-import loValues from "lodash/values";
+import { cloneDeep, values as loValues } from "lodash-es";
 import { isDeleteProperty, nonNullableTypes, parserableTypes } from "./datatypes";
-import { isArray, isString, isUndefined } from "./utils/detector";
+import { isArray, isUndefined } from "./utils/detector";
 
-const deepClone = (cln, obj = {}) => {
-  for (const i in obj) {
-    if (obj.hasOwnProperty(i)) {
-      cln[i] = typeof obj[i] === "object" ? deepClone(obj[i].constructor(), obj[i]) : obj[i];
-    }
-  }
-  return cln;
-};
-
-const emptyValidator = values => {
+function emptyValidator(values: TemplateStringsArray | string) {
   if (isUndefined(values)) {
     throw new Error("You need to define a schema");
   }
@@ -21,14 +12,18 @@ const emptyValidator = values => {
       throw new Error("You need to define a schema");
     }
   }
-};
+}
 
-const RCTS = s => s.replace(/\,/g, "").trim();
+function RCTS(s: string) {
+  return s.replace(/\,/g, "").trim();
+}
 
-const removeCommaAndTrailingSpaces = values => values.map(RCTS);
+function removeCommaAndTrailingSpaces(values: string[]) {
+  return values.map(RCTS);
+}
 
-export const splitter = (strict = false) => {
-  return (strings, ...bindings) => {
+export function splitter(strict = false) {
+  return (strings: TemplateStringsArray, ...bindings: any[]) => {
     emptyValidator(strings);
 
     const pairs = {};
@@ -61,7 +56,7 @@ export const splitter = (strict = false) => {
             typeName.length > 0
               ? typeName.trim()
               : !isUndefined(bindings[bindIdx])
-              ? deepClone(bindings[bindIdx])
+              ? cloneDeep(bindings[bindIdx])
               : bindings[bindIdx];
 
           // not using predefined-value detected
@@ -98,9 +93,9 @@ export const splitter = (strict = false) => {
 
     return pairs;
   };
-};
+}
 
-export const enumSplitter = (strings, ...bindings) => {
+export function enumSplitter(strings: TemplateStringsArray | string, ...bindings: any[]) {
   emptyValidator(strings);
 
   const pairs = {};
@@ -112,11 +107,9 @@ export const enumSplitter = (strings, ...bindings) => {
   }
 
   // handle string argument
-  if (isString(strings)) {
-    strings = [strings];
-  }
+  const templates = typeof strings === "string" ? [strings] : strings;
 
-  strings
+  templates
     .filter(s => s.length > 0)
     .forEach(stmt => {
       const delimiter = ",";
@@ -127,7 +120,7 @@ export const enumSplitter = (strings, ...bindings) => {
       const rex = /\s*([a-zA-Z0-9\_]+\s*\:\s*[\!a-zA-Z]*\s*\,*[\r\n]*)/g;
       const rexEnum = /\s*([a-zA-Z0-9\_]+)\s*\,*/g;
       const splittedStr = preparedStr.split(rex);
-      const enumBlocks = [];
+      const enumBlocks: string[] = [];
 
       splittedStr.forEach(str => {
         if (!rex.test(str)) {
@@ -167,6 +160,6 @@ export const enumSplitter = (strings, ...bindings) => {
     });
 
   return pairs;
-};
+}
 
 export default splitter;

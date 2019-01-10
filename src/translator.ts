@@ -11,9 +11,7 @@ const customValueTranslator = callbackFunc => {
   function translateFunc() {}
 
   translateFunc.isJKTTRANSLATOR = true;
-  translateFunc.translate = value => {
-    return callbackFunc(value);
-  };
+  translateFunc.translate = value => callbackFunc(value);
 
   return translateFunc;
 };

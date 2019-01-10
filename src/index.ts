@@ -1,21 +1,23 @@
-import container from "./container";
+import * as container from "./container";
 import { isDeleteProperty } from "./datatypes";
 import extendBuilder from "./extender";
+import { IJktObject, IStruct } from "./interface";
 import { hasReservedKeys, triggerErrorReservedKeys } from "./reserved_keys";
-import Splitter, { enumSplitter } from "./splitter";
+import { enumSplitter, splitter as createSplitter } from "./splitter";
 import translator from "./translator";
 import utils from "./utils";
-import { isArray, isENUMObject, isJKTObject } from "./utils/detector";
+import { isENUMObject, isJKTObject } from "./utils/detector";
 
-const splitter = Splitter(true);
+const splitter = createSplitter(true);
 
-const descendantChecker = descendantsIds => {
+const descendantChecker = (descendantsIds: string[]) => {
   return struct => descendantsIds.includes(struct.__id[struct.__id.length - 1]);
 };
 
+// TODO: check usage of __id, is it neccessary to accept both string and string[] for __id
 // tslint:disable-next-line:variable-name
-const makeInstance = (__id, schema, u) => {
-  const structId = isArray(__id) ? __id : [__id];
+const makeInstance = (__id: string | string[], schema, u) => {
+  const structId = Array.isArray(__id) ? __id : [__id];
   const cleanSchema = {}; // pure schema
   const dirtySchema = {}; // impure schema because it's including builtin jkt function
   const descentChecker = descendantChecker(structId);
@@ -34,17 +36,24 @@ const makeInstance = (__id, schema, u) => {
     }
   });
 
-  const struct = (...vals) => {
+  const struct: IStruct = (...vals) => {
     if (u.detect.isObject(vals[0])) {
-      const parsed = u.parse(vals[0]);
-      Object.assign(parsed, {
-        j: () => u.serialize(parsed),
-        getSchema: () => cleanSchema,
-        getDirtySchema: () => dirtySchema,
-        toJSON: () => u.serialize(parsed),
-        toString: () => JSON.stringify(u.serialize(parsed)),
-        instanceOf: instance => descentChecker(instance),
-      });
+      const parsed: unknown & IJktObject = u.parse(vals[0]);
+      parsed.j = () => u.serialize(parsed);
+      parsed.getSchema = () => cleanSchema;
+      parsed.getDirtySchema = () => dirtySchema;
+      parsed.toJSON = () => u.serialize(parsed);
+      parsed.toString = () => JSON.stringify(u.serialize(parsed));
+      parsed.instanceOf = instance => descentChecker(instance);
+
+      // Object.assign(parsed, {
+      //   j: () => u.serialize(parsed),
+      //   getSchema: () => cleanSchema,
+      //   getDirtySchema: () => dirtySchema,
+      //   toJSON: () => u.serialize(parsed),
+      //   toString: () => JSON.stringify(u.serialize(parsed)),
+      //   instanceOf: instance => descentChecker(instance),
+      // });
       return parsed;
     } else {
       const str = vals.shift();
@@ -85,10 +94,10 @@ const jkt = (strings: TemplateStringsArray, ...bindings: any[]) => {
 };
 
 jkt.array = jktObj => {
-  return container.arr(jktObj);
+  return container.array(jktObj);
 };
 
-const ENUM = (strings, ...bindings) => {
+const ENUM = (strings: TemplateStringsArray, ...bindings: any[]) => {
   const enumDefinitions = enumSplitter(strings, bindings);
   const enumFunc = () => enumDefinitions;
   enumFunc.isJKTENUM = true;

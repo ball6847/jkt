@@ -1,4 +1,4 @@
-import loValues from "lodash/values";
+import { values as loValues } from "lodash-es";
 import {
   isArray,
   isBoolean,

@@ -1,5 +1,4 @@
-import nilValue from "lodash/isNil";
-import loValues from "lodash/values";
+import { isNil as nilValue, values as loValues } from "lodash-es";
 import moment from "moment";
 import {
   ANY,

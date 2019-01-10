@@ -1,4 +1,4 @@
-import loValues from "lodash/values";
+import { values as loValues } from "lodash-es";
 import utils from "./utils";
 import { isArray, isJKTObject, isNull } from "./utils/detector";
 import { valueParser } from "./utils/parser";
@@ -12,7 +12,7 @@ const appendContainerData = f => {
   return f;
 };
 
-const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
+export const array = (value, strictNull = false, defaultToArray = false) => {
   const parse = (parser, valueToParse) => {
     if (isArray(valueToParse)) {
       const parsedValues = [];
@@ -59,7 +59,4 @@ const arrayContainer = (value, strictNull = false, defaultToArray = false) => {
   return appendContainerData(obj);
 };
 
-export default {
-  arr: arrayContainer,
-  array: arrayContainer,
-};
+export const arr = array;
