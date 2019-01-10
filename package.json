@@ -7,7 +7,11 @@
     "test": "NODE_ENV=test mocha --require vars.js --timeout 15000 --recursive --slow 1 test/",
     "test:watch": "NODE_ENV=test mocha --watch --require vars.js --timeout 15000 --recursive --slow 1 test/",
     "test:ts": "NODE_ENV=test mocha --require vars-ts.js --timeout 15000 --recursive --slow 1 test/",
-    "test:ts:watch": "NODE_ENV=test mocha --watch --require vars-ts.js --timeout 15000 --recursive --slow 1 test/"
+    "test:ts:watch": "NODE_ENV=test mocha --watch --require vars-ts.js --timeout 15000 --recursive --slow 1 test/",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "type-coverage": "type-coverage --project tsconfig.json",
+    "type-coverage:watch": "watch type-coverage ./src"
   },
   "repository": {
     "type": "git",
@@ -37,7 +41,9 @@
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
+    "type-coverage": "^1.6.2",
+    "typescript": "^3.2.2",
+    "watch": "^1.0.2"
   },
   "dependencies": {
     "lodash": "^4.17.5",
