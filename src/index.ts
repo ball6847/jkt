@@ -1,6 +1,6 @@
 import { container } from "./container";
 import { makeInstance } from "./makeInstance";
-import { hasReservedKeys, triggerErrorReservedKeys } from "./reserved_keys";
+import { hasReservedKeys, triggerErrorReservedKeys } from "./reservedKeys";
 import { makeEnumSplitter, makeSplitter } from "./splitter";
 import { customValueTranslator } from "./translator";
 import { generateId } from "./utils/generator";

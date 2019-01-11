@@ -1,5 +1,5 @@
 import { makeInstance } from "./makeInstance";
-import { hasReservedKeys, triggerErrorReservedKeys } from "./reserved_keys";
+import { hasReservedKeys, triggerErrorReservedKeys } from "./reservedKeys";
 import { makeSplitter } from "./splitter";
 import { generateId } from "./utils/generator";
 import { makeUtils } from "./utils/make";

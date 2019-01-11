@@ -1,6 +1,6 @@
 import { BOOLEAN, DATE, DATE_PLAIN, NUMBER, STRING } from "../datatypes";
 import { isArray, isUndefined } from "./detector";
-import { extractMapKey } from "./mapkey_extractor";
+import { extractMapKey } from "./mapkeyExtractor";
 
 export function serialize(baseSchema) {
   return parsedValues => {

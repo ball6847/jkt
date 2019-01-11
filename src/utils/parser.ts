@@ -3,7 +3,7 @@ import values from "lodash/values";
 import moment from "moment";
 import * as type from "../datatypes";
 import * as detector from "./detector";
-import { extractMapKey } from "./mapkey_extractor";
+import { extractMapKey } from "./mapkeyExtractor";
 
 const parser = {
   [type.STRING]: (val: any) => {
