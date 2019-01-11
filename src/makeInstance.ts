@@ -27,21 +27,14 @@ export function makeInstance(id: string | string[], schema, u) {
   const struct: IStruct = (...vals) => {
     if (u.detect.isObject(vals[0])) {
       const parsed: unknown & IJktObject = u.parse(vals[0]);
-      parsed.j = () => u.serialize(parsed);
-      parsed.getSchema = () => cleanSchema;
-      parsed.getDirtySchema = () => dirtySchema;
-      parsed.toJSON = () => u.serialize(parsed);
-      parsed.toString = () => JSON.stringify(u.serialize(parsed));
-      parsed.instanceOf = instance => descentChecker(instance);
-
-      // Object.assign(parsed, {
-      //   j: () => u.serialize(parsed),
-      //   getSchema: () => cleanSchema,
-      //   getDirtySchema: () => dirtySchema,
-      //   toJSON: () => u.serialize(parsed),
-      //   toString: () => JSON.stringify(u.serialize(parsed)),
-      //   instanceOf: instance => descentChecker(instance),
-      // });
+      Object.assign(parsed, {
+        j: () => u.serialize(parsed),
+        getSchema: () => cleanSchema,
+        getDirtySchema: () => dirtySchema,
+        toJSON: () => u.serialize(parsed),
+        toString: () => JSON.stringify(u.serialize(parsed)),
+        instanceOf: instance => descentChecker(instance),
+      });
       return parsed;
     } else {
       const str = vals.shift();

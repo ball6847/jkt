@@ -1,5 +1,9 @@
 import { isFunction } from "./utils/detector";
 
+class CustomTranslator {
+  constructor(public isJKTTRANSLATOR: boolean, public translate: (v: any) => any) {}
+}
+
 export function customValueTranslator(callbackFunc) {
   if (!isFunction(callbackFunc)) {
     throw new TypeError(
@@ -7,11 +11,5 @@ export function customValueTranslator(callbackFunc) {
     );
   }
 
-  // tslint:disable-next-line:no-empty
-  function translateFunc() {}
-
-  translateFunc.isJKTTRANSLATOR = true;
-  translateFunc.translate = value => callbackFunc(value);
-
-  return translateFunc;
+  return new CustomTranslator(true, value => callbackFunc(value));
 }
