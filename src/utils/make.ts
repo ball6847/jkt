@@ -1,13 +1,10 @@
-import detector from "./detector";
-import parserUtil from "./parser";
-import serializerUtil from "./serializer";
+import * as detector from "./detector";
+import { parse } from "./parser";
+import { serialize } from "./serializer";
 
-const makeUtils = (schema: any) => {
-  return {
-    parse: parserUtil(schema),
-    serialize: serializerUtil(schema),
-    detect: detector,
-  };
-};
-
-export = makeUtils;
+// TODO: figure out typing for schema
+export const makeUtils = (schema: any) => ({
+  parse: parse(schema),
+  serialize: serialize(schema),
+  detect: detector,
+});

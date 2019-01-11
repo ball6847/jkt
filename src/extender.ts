@@ -1,24 +1,21 @@
+import { makeInstance } from "./makeInstance";
 import { hasReservedKeys, triggerErrorReservedKeys } from "./reserved_keys";
-import Splitter from "./splitter";
-import { generator } from "./utils";
+import { makeSplitter } from "./splitter";
+import { generateId } from "./utils/generator";
+import { makeUtils } from "./utils/make";
 
-// tslint:disable-next-line:variable-name
-const extendBuilder = (__id, baseSchema, strict = false) => {
-  const splitter = Splitter(strict);
+export function extendBuilder(id, baseSchema, strict = false) {
+  const splitter = makeSplitter(strict);
   return (childStrings, ...childBindings) => {
-    const { makeUtils } = require("./utils");
-    const { Inst } = require("./index");
     const childSchema = splitter(childStrings, childBindings);
-    const newSchema = Object.assign({}, baseSchema, childSchema);
+    const newSchema = { ...baseSchema, ...childSchema };
 
     if (hasReservedKeys(newSchema)) {
       triggerErrorReservedKeys();
     }
 
-    const childId = generator.generateId();
-    const newId = __id.concat([childId]);
-    return Inst(newId, newSchema, makeUtils(newSchema));
+    const childId = generateId();
+    const newId = id.concat([childId]);
+    return makeInstance(newId, newSchema, makeUtils(newSchema));
   };
-};
-
-export default extendBuilder;
+}

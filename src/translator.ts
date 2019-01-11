@@ -1,7 +1,7 @@
-import detector from "./utils/detector";
+import { isFunction } from "./utils/detector";
 
-const customValueTranslator = callbackFunc => {
-  if (!detector.isFunction(callbackFunc)) {
+export function customValueTranslator(callbackFunc) {
+  if (!isFunction(callbackFunc)) {
     throw new TypeError(
       "You have to supply callback function with one parameter as given value to translate",
     );
@@ -14,8 +14,4 @@ const customValueTranslator = callbackFunc => {
   translateFunc.translate = value => callbackFunc(value);
 
   return translateFunc;
-};
-
-export default {
-  custom: customValueTranslator,
-};
+}

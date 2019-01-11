@@ -3,7 +3,7 @@ import values from "lodash/values";
 import { isDeleteProperty, nonNullableTypes, parserableTypes } from "./datatypes";
 import { isArray, isUndefined } from "./utils/detector";
 
-export function splitter(strict = false) {
+export function makeSplitter(strict = false) {
   return (strings: TemplateStringsArray, ...bindings: any[]) => {
     emptyValidator(strings);
 
@@ -75,7 +75,7 @@ export function splitter(strict = false) {
   };
 }
 
-export function enumSplitter(strings: TemplateStringsArray | string, ...bindings: any[]) {
+export function makeEnumSplitter(strings: TemplateStringsArray | string, ...bindings: any[]) {
   emptyValidator(strings);
 
   const pairs = {};
@@ -161,5 +161,3 @@ function RCTS(s: string) {
 function removeCommaAndTrailingSpaces(strings: string[]) {
   return strings.map(RCTS);
 }
-
-export default splitter;

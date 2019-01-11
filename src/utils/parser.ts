@@ -1,71 +1,34 @@
 import isNil from "lodash/isNil";
 import values from "lodash/values";
 import moment from "moment";
-import {
-  ANY,
-  ARRAY,
-  ARRAY_ONLY,
-  BOOLEAN,
-  BOOLEAN_ONLY,
-  DATE,
-  DATE_ONLY,
-  DATE_PLAIN,
-  DATE_PLAIN_ONLY,
-  FUNCTION,
-  FUNCTION_ONLY,
-  isDeleteProperty,
-  isPredefinedTypes,
-  nonNullableTypes,
-  NUMBER,
-  NUMBER_ONLY,
-  OBJECT,
-  OBJECT_ONLY,
-  parserableTypes,
-  STRING,
-  STRING_ONLY,
-} from "../datatypes";
-import detector from "./detector";
-import extractMapKey from "./mapkey_extractor";
-
-const validDateFromString = (dateVal: moment.MomentInput, utcAware = true) => {
-  if (detector.isString(dateVal)) {
-    try {
-      // detect ISO 8601
-      const date = utcAware ? moment(dateVal) : moment.utc(dateVal);
-      if (date.isValid()) {
-        return date;
-      }
-    } catch (err) {
-      return false;
-    }
-  }
-  return false;
-};
+import * as type from "../datatypes";
+import * as detector from "./detector";
+import { extractMapKey } from "./mapkey_extractor";
 
 const parser = {
-  [STRING]: (val: any) => {
+  [type.STRING]: (val: any) => {
     if (detector.isString(val) && val.length) {
       return val;
     }
     const parsed = val ? JSON.stringify(val) : null;
     return detector.isString(parsed) && parsed.length > 0 ? parsed : null;
   },
-  [ARRAY]: (val: any) => (detector.isArray(val) ? val : null),
-  [BOOLEAN]: (val: any) => (detector.isBoolean(val) ? val : null),
-  [DATE]: (val: any) => {
+  [type.ARRAY]: (val: any) => (detector.isArray(val) ? val : null),
+  [type.BOOLEAN]: (val: any) => (detector.isBoolean(val) ? val : null),
+  [type.DATE]: (val: any) => {
     if (detector.isDate(val)) {
       return val;
     }
     return validDateFromString(val) || null;
   },
-  [DATE_PLAIN]: (val: any) => {
+  [type.DATE_PLAIN]: (val: any) => {
     if (detector.isDate(val)) {
       return val;
     }
     return validDateFromString(val, false) || null;
   },
-  [FUNCTION]: (val: any) => (detector.isFunction(val) ? val : null),
-  [NUMBER]: (val: any) => {
+  [type.FUNCTION]: (val: any) => (detector.isFunction(val) ? val : null),
+  [type.NUMBER]: (val: any) => {
     if (detector.isNumber(val)) {
       return val;
     }
@@ -74,43 +37,44 @@ const parser = {
     }
     return null;
   },
-  [OBJECT]: (val: any) => (detector.isObject ? val : null),
-  [ANY]: (val: any) => val,
+  [type.OBJECT]: (val: any) => (detector.isObject ? val : null),
+  [type.ANY]: (val: any) => val,
 };
 
 const nonNullableChecker = {
-  [STRING_ONLY]: (val: any) => detector.isString(val),
-  [ARRAY_ONLY]: (val: any) => detector.isArray(val),
-  [BOOLEAN_ONLY]: (val: any) => detector.isBoolean(val),
-  [DATE_ONLY]: (val: any) => detector.isDate(val) || validDateFromString(val) !== null,
-  [DATE_PLAIN_ONLY]: (val: any) => detector.isDate(val) || validDateFromString(val, false) !== null,
-  [FUNCTION_ONLY]: (val: any) => detector.isFunction(val),
-  [NUMBER_ONLY]: (val: any) => {
+  [type.STRING_ONLY]: (val: any) => detector.isString(val),
+  [type.ARRAY_ONLY]: (val: any) => detector.isArray(val),
+  [type.BOOLEAN_ONLY]: (val: any) => detector.isBoolean(val),
+  [type.DATE_ONLY]: (val: any) => detector.isDate(val) || validDateFromString(val) !== null,
+  [type.DATE_PLAIN_ONLY]: (val: any) =>
+    detector.isDate(val) || validDateFromString(val, false) !== null,
+  [type.FUNCTION_ONLY]: (val: any) => detector.isFunction(val),
+  [type.NUMBER_ONLY]: (val: any) => {
     if (val && !isNaN(val)) {
       return detector.isStringFloat(val) ? parseFloat(val) : parseInt(val, 10);
     }
 
     return false;
   },
-  [OBJECT_ONLY]: (val: any) => detector.isObject(val),
+  [type.OBJECT_ONLY]: (val: any) => detector.isObject(val),
 };
 
 const nonNullableParser = {
-  [STRING_ONLY]: (val: any) => parser[STRING](val),
-  [ARRAY_ONLY]: (val: any) => parser[ARRAY](val),
-  [BOOLEAN_ONLY]: (val: any) => parser[BOOLEAN](val),
-  [DATE_ONLY]: (val: any) => parser[DATE](val),
-  [DATE_PLAIN_ONLY]: (val: any) => parser[DATE_PLAIN](val),
-  [FUNCTION_ONLY]: (val: any) => parser[FUNCTION](val),
-  [NUMBER_ONLY]: (val: any) => parser[NUMBER](val),
-  [OBJECT_ONLY]: (val: any) => parser[OBJECT](val),
+  [type.STRING_ONLY]: (val: any) => parser[type.STRING](val),
+  [type.ARRAY_ONLY]: (val: any) => parser[type.ARRAY](val),
+  [type.BOOLEAN_ONLY]: (val: any) => parser[type.BOOLEAN](val),
+  [type.DATE_ONLY]: (val: any) => parser[type.DATE](val),
+  [type.DATE_PLAIN_ONLY]: (val: any) => parser[type.DATE_PLAIN](val),
+  [type.FUNCTION_ONLY]: (val: any) => parser[type.FUNCTION](val),
+  [type.NUMBER_ONLY]: (val: any) => parser[type.NUMBER](val),
+  [type.OBJECT_ONLY]: (val: any) => parser[type.OBJECT](val),
 };
 
-const valueParser = (schema, valuesToParse) => {
+export const valueParser = (schema, valuesToParse) => {
   const parsedValues = {};
   Object.keys(schema).forEach(key => {
     const valueType = schema[key];
-    if (isDeleteProperty(valueType)) {
+    if (type.isDeleteProperty(valueType)) {
       return;
     }
 
@@ -125,7 +89,7 @@ const valueParser = (schema, valuesToParse) => {
         : valuesToParse[srcKey !== null ? srcKey : key];
 
     if (!detector.isUndefined(value) || detector.isJKTObject(valueType)) {
-      if (parserableTypes(valueType) && !detector.isJKTObject(valueType)) {
+      if (type.parserableTypes(valueType) && !detector.isJKTObject(valueType)) {
         parsedValues[key] = parser[valueType](value);
       } else if (detector.isJKTObject(valueType)) {
         // handle jkt obj
@@ -137,7 +101,7 @@ const valueParser = (schema, valuesToParse) => {
       } else if (detector.isTranslatorObject(valueType)) {
         // handle translator
         parsedValues[key] = valueType.translate(value);
-      } else if (nonNullableTypes(valueType)) {
+      } else if (type.nonNullableTypes(valueType)) {
         if (!isNil(nonNullableChecker[valueType](value))) {
           parsedValues[key] = nonNullableParser[valueType](value);
         }
@@ -147,7 +111,7 @@ const valueParser = (schema, valuesToParse) => {
       } else {
         parsedValues[key] = value;
       }
-    } else if (!parserableTypes(valueType) && isPredefinedTypes(valueType)) {
+    } else if (!type.parserableTypes(valueType) && type.isPredefinedTypes(valueType)) {
       // Do not parse enum value
       if (!detector.isENUMObject(valueType)) {
         // the predefined type is container type
@@ -161,7 +125,7 @@ const valueParser = (schema, valuesToParse) => {
       }
     } else {
       // Value was undefined or not matched with available schema
-      if (!nonNullableTypes(valueType)) {
+      if (!type.nonNullableTypes(valueType)) {
         parsedValues[key] = null;
       }
     }
@@ -169,9 +133,24 @@ const valueParser = (schema, valuesToParse) => {
   return parsedValues;
 };
 
-const parse = baseSchema => {
+// TODO: function name could be changed to something like, parseSchema
+export function parse(baseSchema) {
   return valuesToParse => valueParser(baseSchema, valuesToParse);
-};
+}
 
-export default parse;
-export { valueParser };
+// private helper function
+
+function validDateFromString(dateVal: moment.MomentInput, utcAware = true) {
+  if (detector.isString(dateVal)) {
+    try {
+      // detect ISO 8601
+      const date = utcAware ? moment(dateVal) : moment.utc(dateVal);
+      if (date.isValid()) {
+        return date;
+      }
+    } catch (err) {
+      return false;
+    }
+  }
+  return false;
+}

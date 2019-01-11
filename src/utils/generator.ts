@@ -5,5 +5,3 @@ shortId.seed(1831);
 export const generateId = () => {
   return shortId.generate() as string;
 };
-
-export default { generateId };

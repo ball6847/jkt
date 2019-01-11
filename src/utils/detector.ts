@@ -10,26 +10,35 @@ const UNDEF_V = "[object Undefined]";
 const ERROR_V = "[object Error]";
 const SYMBOL_V = "[object Symbol]";
 
-const comparator = (comp: string) => {
+function comparator(comp: string) {
   return (obj: any) => Object.prototype.toString.call(obj) === comp;
-};
+}
 
-const isArray = comparator(ARRAY_V);
-const isObject = comparator(OBJECT_V);
-const isFunction = comparator(FUNC_V);
-const isString = comparator(STRING_V);
-const isNumber = comparator(NUMBER_V);
-const isBoolean = comparator(BOOL_V);
-const isNull = comparator(NULL_V);
-const isDate = comparator(DATE_V);
-const isUndefined = comparator(UNDEF_V);
-const isError = comparator(ERROR_V);
-const isSymbol = comparator(SYMBOL_V);
-const isInt = (num: any) => !isSymbol(num) && Number(num) === num && num % 1 === 0;
-const isFloat = (num: any) => !isSymbol(num) && Number(num) === num && num % 1 !== 0;
-const isStringFloat = (num: any) =>
-  !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") !== -1;
-const isJKTObject = (valueType: any) => {
+export const isArray = comparator(ARRAY_V);
+export const isObject = comparator(OBJECT_V);
+export const isFunction = comparator(FUNC_V);
+export const isString = comparator(STRING_V);
+export const isNumber = comparator(NUMBER_V);
+export const isBoolean = comparator(BOOL_V);
+export const isNull = comparator(NULL_V);
+export const isDate = comparator(DATE_V);
+export const isUndefined = comparator(UNDEF_V);
+export const isError = comparator(ERROR_V);
+export const isSymbol = comparator(SYMBOL_V);
+
+export function isInt(num: any) {
+  return !isSymbol(num) && Number(num) === num && num % 1 === 0;
+}
+
+export function isFloat(num: any) {
+  return !isSymbol(num) && Number(num) === num && num % 1 !== 0;
+}
+
+export function isStringFloat(num: any) {
+  return !isNull(num) && !isFloat(num) && !isNaN(num) && num.toString().indexOf(".") !== -1;
+}
+
+export function isJKTObject(valueType: any) {
   let isJKT = false;
   let hasSchema = false;
   if (Object(valueType).hasOwnProperty("isJKT")) {
@@ -40,9 +49,9 @@ const isJKTObject = (valueType: any) => {
   }
 
   return isJKT && hasSchema;
-};
+}
 
-const isENUMObject = (valueType: any) => {
+export function isENUMObject(valueType: any) {
   let isENUM = false;
   let hasToJsonFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTENUM")) {
@@ -52,9 +61,9 @@ const isENUMObject = (valueType: any) => {
     hasToJsonFunc = true;
   }
   return isENUM && hasToJsonFunc;
-};
+}
 
-const isTranslatorObject = (valueType: any) => {
+export function isTranslatorObject(valueType: any) {
   let isTranslator = false;
   let hasTranslateFunc = false;
   if (Object(valueType).hasOwnProperty("isJKTTRANSLATOR")) {
@@ -64,29 +73,8 @@ const isTranslatorObject = (valueType: any) => {
     hasTranslateFunc = true;
   }
   return isTranslator && hasTranslateFunc;
-};
+}
 
-const hasMappingKey = (key: string) => /[a-zA-Z0-9\_]+\-\>[a-zA-Z0-9\_]+/g.test(key);
-
-const detectors = {
-  isArray,
-  isObject,
-  isFunction,
-  isString,
-  isNumber,
-  isBoolean,
-  isNull,
-  isDate,
-  isUndefined,
-  isError,
-  isSymbol,
-  isInt,
-  isFloat,
-  isStringFloat,
-  isJKTObject,
-  isENUMObject,
-  isTranslatorObject,
-  hasMappingKey,
-};
-
-export = detectors;
+export function hasMappingKey(key: string) {
+  return /[a-zA-Z0-9\_]+\-\>[a-zA-Z0-9\_]+/g.test(key);
+}

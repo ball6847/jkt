@@ -1,6 +1,6 @@
 import values from "lodash/values";
-import utils from "./utils";
 import { isArray, isJKTObject, isNull } from "./utils/detector";
+import { makeUtils } from "./utils/make";
 import { valueParser } from "./utils/parser";
 
 const baseContainerData = {
@@ -12,7 +12,7 @@ const appendContainerData = f => {
   return f;
 };
 
-export const array = (value, strictNull = false, defaultToArray = false) => {
+export function container(value, strictNull = false, defaultToArray = false) {
   const parse = (parser, valueToParse) => {
     if (isArray(valueToParse)) {
       const parsedValues = [];
@@ -44,7 +44,7 @@ export const array = (value, strictNull = false, defaultToArray = false) => {
 
   const obj = valueToParse => {
     const parsed = parse(valueParser, valueToParse);
-    const util = utils.makeUtils(value.schema);
+    const util = makeUtils(value.schema);
     Object.assign(parsed, {
       j: () => util.serialize(parsed),
       getSchema: () => value.schema,
@@ -57,6 +57,4 @@ export const array = (value, strictNull = false, defaultToArray = false) => {
 
   obj.parse = parse;
   return appendContainerData(obj);
-};
-
-export const arr = array;
+}

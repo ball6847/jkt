@@ -1,6 +1,16 @@
 import { BOOLEAN, DATE, DATE_PLAIN, NUMBER, STRING } from "../datatypes";
-import detector from "./detector";
-import extractMapKey from "./mapkey_extractor";
+import { isArray, isUndefined } from "./detector";
+import { extractMapKey } from "./mapkey_extractor";
+
+export function serialize(baseSchema) {
+  return parsedValues => {
+    if (isArray(parsedValues)) {
+      return parsedValues.map(v => valueSerializer(baseSchema, v));
+    } else {
+      return valueSerializer(baseSchema, parsedValues);
+    }
+  };
+}
 
 const isSafeToRelease = typeName => [STRING, NUMBER, DATE, DATE_PLAIN, BOOLEAN].includes(typeName);
 
@@ -32,12 +42,12 @@ const valueSerializer = (baseSchema, parsedValues) => {
     }
 
     const value = parsedValues[key];
-    if (!detector.isUndefined(value)) {
+    if (!isUndefined(value)) {
       if (isSafeToRelease(valueType)) {
         serializedValues[key] = safeSerializer[valueType](value);
       } else {
         const purifiedVal = purified(value);
-        if (!detector.isUndefined(purifiedVal)) {
+        if (!isUndefined(purifiedVal)) {
           serializedValues[key] = purifiedVal;
         }
       }
@@ -45,15 +55,3 @@ const valueSerializer = (baseSchema, parsedValues) => {
   });
   return serializedValues;
 };
-
-const serialize = baseSchema => {
-  return parsedValues => {
-    if (detector.isArray(parsedValues)) {
-      return parsedValues.map(v => valueSerializer(baseSchema, v));
-    } else {
-      return valueSerializer(baseSchema, parsedValues);
-    }
-  };
-};
-
-export default serialize;
