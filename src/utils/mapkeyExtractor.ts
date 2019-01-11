@@ -1,5 +1,3 @@
-"use strict";
-
 import { hasMappingKey } from "./detector";
 
 /**
