@@ -1,4 +1,4 @@
-import { values as loValues } from "lodash-es";
+import values from "lodash/values";
 import {
   isArray,
   isBoolean,
@@ -67,7 +67,7 @@ export const isPredefinedTypes = valueType =>
 
 export const hasValidTypes = schema => {
   let valid = true;
-  loValues(schema).forEach(t => {
+  values(schema).forEach(t => {
     if (!(parserableTypes(t) || nonNullableTypes(t))) {
       const validPredefinedVal =
         isFunction(t) ||

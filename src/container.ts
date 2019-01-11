@@ -1,4 +1,4 @@
-import { values as loValues } from "lodash-es";
+import values from "lodash/values";
 import utils from "./utils";
 import { isArray, isJKTObject, isNull } from "./utils/detector";
 import { valueParser } from "./utils/parser";
@@ -20,7 +20,7 @@ export const array = (value, strictNull = false, defaultToArray = false) => {
         if (isJKTObject(value)) {
           const p = parser(value.__schema, item);
           let hasNotNullValue = false;
-          loValues(p).forEach(v => {
+          values(p).forEach(v => {
             if (!isNull(v) && v !== undefined) {
               hasNotNullValue = true;
             }

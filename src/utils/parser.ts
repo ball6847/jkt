@@ -1,4 +1,5 @@
-import { isNil as nilValue, values as loValues } from "lodash-es";
+import isNil from "lodash/isNil";
+import values from "lodash/values";
 import moment from "moment";
 import {
   ANY,
@@ -131,13 +132,13 @@ const valueParser = (schema, valuesToParse) => {
         parsedValues[key] = valueParser(valueType.__schema, value);
       } else if (detector.isENUMObject(valueType)) {
         // handle enum
-        const validEnumValues = loValues(valueType.j());
+        const validEnumValues = values(valueType.j());
         parsedValues[key] = validEnumValues.includes(value) ? value : null;
       } else if (detector.isTranslatorObject(valueType)) {
         // handle translator
         parsedValues[key] = valueType.translate(value);
       } else if (nonNullableTypes(valueType)) {
-        if (!nilValue(nonNullableChecker[valueType](value))) {
+        if (!isNil(nonNullableChecker[valueType](value))) {
           parsedValues[key] = nonNullableParser[valueType](value);
         }
       } else if (valueType.isContainer) {

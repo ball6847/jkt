@@ -1,26 +1,7 @@
-import { cloneDeep, values as loValues } from "lodash-es";
+import cloneDeep from "lodash/cloneDeep";
+import values from "lodash/values";
 import { isDeleteProperty, nonNullableTypes, parserableTypes } from "./datatypes";
 import { isArray, isUndefined } from "./utils/detector";
-
-function emptyValidator(values: TemplateStringsArray | string) {
-  if (isUndefined(values)) {
-    throw new Error("You need to define a schema");
-  }
-  if (values.length === 1) {
-    const s = values[0].replace(/(\s)/gm, "");
-    if (s.length === 0) {
-      throw new Error("You need to define a schema");
-    }
-  }
-}
-
-function RCTS(s: string) {
-  return s.replace(/\,/g, "").trim();
-}
-
-function removeCommaAndTrailingSpaces(values: string[]) {
-  return values.map(RCTS);
-}
 
 export function splitter(strict = false) {
   return (strings: TemplateStringsArray, ...bindings: any[]) => {
@@ -62,13 +43,12 @@ export function splitter(strict = false) {
           // not using predefined-value detected
           if (typeName.length > 0) {
             const trimmedName = typeName.trim();
-            if (
-              !(
-                parserableTypes(trimmedName) ||
-                nonNullableTypes(trimmedName) ||
-                isDeleteProperty(trimmedName)
-              )
-            ) {
+            const isKnownTypes =
+              parserableTypes(trimmedName) ||
+              nonNullableTypes(trimmedName) ||
+              isDeleteProperty(trimmedName);
+
+            if (!isKnownTypes) {
               throw new TypeError("Unknown type was given");
             }
           }
@@ -84,7 +64,7 @@ export function splitter(strict = false) {
         });
       });
 
-    const pairVals = loValues(pairs);
+    const pairVals = values(pairs);
     const countUndefTypes = pairVals.filter(typeVal => typeof typeVal === "undefined").length;
 
     if (countUndefTypes > 0 && strict) {
@@ -160,6 +140,26 @@ export function enumSplitter(strings: TemplateStringsArray | string, ...bindings
     });
 
   return pairs;
+}
+
+function emptyValidator(strings: TemplateStringsArray | string) {
+  if (isUndefined(strings)) {
+    throw new Error("You need to define a schema");
+  }
+  if (strings.length === 1) {
+    const s = strings[0].replace(/(\s)/gm, "");
+    if (s.length === 0) {
+      throw new Error("You need to define a schema");
+    }
+  }
+}
+
+function RCTS(s: string) {
+  return s.replace(/\,/g, "").trim();
+}
+
+function removeCommaAndTrailingSpaces(strings: string[]) {
+  return strings.map(RCTS);
 }
 
 export default splitter;
